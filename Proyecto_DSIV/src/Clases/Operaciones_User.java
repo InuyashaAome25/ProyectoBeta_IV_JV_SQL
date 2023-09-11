@@ -106,4 +106,44 @@ public class Operaciones_User {
             throw new Exception("Error en la busqueda");
         }
     }
+    public boolean verificarIDUsuario(String ID, Conexion objC) throws Exception{
+        Connection cnn= objC.establecer_Conexion();
+        stmt = cnn.createStatement();
+        String cadSQL;
+        try {
+            cadSQL ="SELECT* FROM Usuarios WHERE id_usuario = " +ID+ "'";
+            recordset = stmt.executeQuery(cadSQL);
+            boolean registroU = recordset.next();
+            cnn.close();
+            return registroU;
+        }catch (SQLException e){
+            cnn.close();
+            throw new Exception("Usted ya se encuentra registrado ");
+        }
+    }
+    public void registroUsuario(Usuarios objU, Conexion objC) throws Exception{
+        Connection cnn = objC.establecer_Conexion();
+        stmt = cnn.createStatement();
+        String cadSQL;
+        String cadSQL2;
+        String cadSQL3;
+        Correo_Usuarios objCE = new Correo_Usuarios();
+        Telefonos_Usuarios objTU = new Telefonos_Usuarios();
+
+        try {
+            cadSQL ="INSERT INTO Usuarios (id_usuario, nombre, apellido, dirrecion) VALUES ('" +objU.getId_Usuario()
+                    + "','" +objU.getNombre() + "','" +objU.getApellido() + "','" +objU.getDirreccion() +"')";
+            cadSQL2 ="INSERT INTO Correo_Usuarios (id_correo, correoElectronico) VALUES ('" + objCE.getId_Correo()
+                    + "','" +objCE.getCorreoElectronicoU() +"')";
+            cadSQL3 ="INSERT INTO Telefonos_Usuarios VALUES (id_telefono, telefonoU) ('" +objTU.getId_Telefono()
+                    + "','" +objTU.getTelefonoU() +"')";
+            stmt.executeUpdate(cadSQL);
+            stmt.executeUpdate(cadSQL2);
+            stmt.executeUpdate(cadSQL3);
+            cnn.close();
+        } catch (SQLException e){
+            cnn.close();
+            throw new Exception("No se ha podido realizar el registro");
+        }
+    }
 }
